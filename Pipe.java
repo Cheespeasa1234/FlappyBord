@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 public class Pipe {
 	
 	public boolean testHitboxes = false;
+	public boolean givenScore = false;
 	
 	public Image pipe = Game.pipe;
 	public Image tube = Game.tube;

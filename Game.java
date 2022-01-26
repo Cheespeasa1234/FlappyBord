@@ -46,10 +46,10 @@ public class Game extends JPanel implements MouseListener, KeyListener
    private int dy = 0;  		//velocity
    private int jumpHeight = 14; //velocity change in jump
    private int maxSpeed = 15;   //max speed in any direction
-   private int scrollSpeed = 4; //how fast stuff moves
+   private int scrollSpeed = 5; //how fast stuff moves
    private int deltaTime = 1;   //delta time
    
-   private int score = 0;
+   private int score = 0; //not the score
 
    //static b/c i need to reference these in Pipe class for maths...
    public static Image bird = new ImageIcon(Game.class.getResource("bird.png")).getImage();
@@ -81,15 +81,16 @@ public class Game extends JPanel implements MouseListener, KeyListener
 			if(y >= PREF_H) y = PREF_H - 1;
 			
 			for(int i = 0; i < pipes.size(); i++) {
-				pipes.get(i).setX(pipes.get(i).x - scrollSpeed);
-				if(pipes.get(i).x <= -200) {
+				Pipe current = pipes.get(i);
+				current.setX(current.x - scrollSpeed);
+				if(current.x <= -200) {
 					pipes.remove(i);
-				}
-				if(i <= 2) {
-					if(pipes.get(i).x <= x) {
+				} else if(i <= 2) {
+					if(current.x <= x && !current.givenScore) {
 							score++;
-					} else if(pipes.get(i).x <= x + 200) {
-							pipes.get(i).testHitboxes = true;
+							current.givenScore = true;
+					} else if(current.x <= x + 200) {
+							current.testHitboxes = true;
 					}
 				}
 			}
@@ -124,7 +125,6 @@ public class Game extends JPanel implements MouseListener, KeyListener
       
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
       
-      
       //draw the sky... a bit transparent
       float alpha = 0.5f;
       AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,alpha * deltaTime);
@@ -136,9 +136,9 @@ public class Game extends JPanel implements MouseListener, KeyListener
       if(deltaTime == 0) alpha = 0.5f;
       ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,alpha);
 	  g2.setComposite(ac);
-      
-      g2.drawImage(bird, x, y, (bird.getWidth(this) / birdScale), bird.getHeight(this) / birdScale, this);
-      
+	  
+	  g2.drawImage(bird, x, y, (bird.getWidth(this) / birdScale), bird.getHeight(this) / birdScale, this);
+       
       for(int i = 0; i < pipes.size(); i++) {
     	  pipes.get(i).draw(g2);
     	  
@@ -162,6 +162,7 @@ public class Game extends JPanel implements MouseListener, KeyListener
 				 
 					  g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 					  
+					  break;
 				  }	 
 			  }
     		  
@@ -172,6 +173,11 @@ public class Game extends JPanel implements MouseListener, KeyListener
 		  if(showingHitboxes) g2.fill(birdHitbox);
 		  
       }
+      
+      g2.setFont(new Font("Monato", Font.PLAIN, 30));
+      if(deltaTime != 0)
+      g2.drawString(score + "", PREF_W / 2 - g2.getFontMetrics().stringWidth(score + ""), 100);
+      
    }
    
    
