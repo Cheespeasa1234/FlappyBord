@@ -41,9 +41,9 @@ public class Game extends JPanel implements MouseListener, KeyListener
    public static int pipeScale = 2;
    
    //physics vars, for just this class
-   private int x = 300; 		//bird xpos
-   private int y = 100; 		//bird ypos
-   private int dy = 0;  		//velocity
+   private int x = 300; 		  //bird xpos
+   private int y = 100; 		  //bird ypos
+   private int dy = 0;  		  //velocity
    private int jumpHeight = 14; //velocity change in jump
    private int maxSpeed = 15;   //max speed in any direction
    private int scrollSpeed = 4; //how fast stuff moves
@@ -51,21 +51,14 @@ public class Game extends JPanel implements MouseListener, KeyListener
    
    private int score = 0;
    
-   public final ImageIcon birdIcon = new ImageIcon(Game.class.getResource("bird.png"));
-   public final Image bird = birdIcon.getImage();
-   
    private Rectangle birdHitbox = new Rectangle(x + birdScale * 10, y - bird.getHeight(null), bird.getWidth(null) / 8 - (birdScale * 5), bird.getHeight(null) / 8);
 
    //static b/c i need to reference these in Pipe class for maths...
    public static Image pipe = new ImageIcon(Game.class.getResource("pipe.png")).getImage();
-   public static Image getPipe() {return pipe;}
-   
    public static Image tube = new ImageIcon(Game.class.getResource("tube.png")).getImage();
-   public static Image getTube() {return tube;}
-   
    public static Image sky = new ImageIcon(Game.class.getResource("sky.jpg")).getImage();
-   public static Image getSky() {return sky;}
-   
+   public static Image bird = new ImageIcon(Game.class.getResource("bird.png")).getImage();
+
    public ArrayList<Pipe> pipes = new ArrayList<Pipe>();
    
    public Timer pipeSpawnTimer = new Timer(1500, new ActionListener() {
