@@ -34,8 +34,14 @@ public class Game extends JPanel implements MouseListener, KeyListener
    public static final int PREF_W = 1111;
    public static final int PREF_H = 696;
    
-   public static boolean showingHitboxes = false;
+   //bunch of crap for restarting / starting game lol
+   public boolean gameStarted = false;
+   public boolean gameOver = false;
+   public boolean showingHitboxes = false;
+   public boolean readyToRestart = false;
+   public boolean restarting = false;
    
+   public boolean isFirstStart = true;
    
    public int birdScale = 6;
    public static int pipeScale = 2;
@@ -60,6 +66,13 @@ public class Game extends JPanel implements MouseListener, KeyListener
    private Rectangle birdHitbox = new Rectangle(x + birdScale * 10, y - bird.getHeight(null), bird.getWidth(null) / 8 - (birdScale * 5), bird.getHeight(null) / 8);
 
    public ArrayList<Pipe> pipes = new ArrayList<Pipe>();
+   
+   public Timer wait = new Timer(1000, new ActionListener() {
+	   public void actionPerformed(ActionEvent e) {
+		   	readyToRestart = true;
+		   	wait.stop();
+	   }
+   });
    
    public Timer pipeSpawnTimer = new Timer(1500, new ActionListener() {
 	   	public void actionPerformed(ActionEvent e) {
@@ -110,9 +123,6 @@ public class Game extends JPanel implements MouseListener, KeyListener
    {
       this.setFocusable(true);
       this.setBackground(Color.WHITE);
-      addMouseListener(this);
-      timer.start();
-      pipeSpawnTimer.start();
       this.addMouseListener(this);
       this.addKeyListener(this);
    }
@@ -150,19 +160,10 @@ public class Game extends JPanel implements MouseListener, KeyListener
 			  
 			  if(i < 3) {
 				  if(pipes.get(i).hitboxes[hitboxLoop].intersects(birdHitbox)) {
-					  pipeSpawnTimer.stop();
-					  scrollSpeed = 0;
-					  dy = 0;
-					  deltaTime = 0;
 					  
-					  g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
-	
-					  g2.setFont(new Font("Monato", Font.BOLD, 40));
-					  g2.drawString("You lose!", PREF_W / 2 - g2.getFontMetrics().stringWidth("You lose!") / 2, 100);
-				 
-					  g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+					  gameOver = true;
+					  gameStarted = false;
 					  
-					  break;
 				  }	 
 			  }
     		  
@@ -174,10 +175,35 @@ public class Game extends JPanel implements MouseListener, KeyListener
 		  
       }
       
+      if(gameOver) {
+    	  
+    	  pipeSpawnTimer.stop();
+		  scrollSpeed = 0;
+		  dy = 0;
+		  deltaTime = 0;
+		  
+		  g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+
+		  g2.setFont(new Font("Monato", Font.BOLD, 40));
+		  g2.drawString("You lose!", PREF_W / 2 - g2.getFontMetrics().stringWidth("You lose!") / 2, 100);
+		  
+		  if(!restarting) {
+			  wait.start();
+			  restarting = true;
+		  }
+		  if(readyToRestart) {
+			  g2.drawString("Press SPACE to restart!", PREF_W / 2 - g2.getFontMetrics().stringWidth("Press SPACE to restart!") / 2, 150);				 
+			  g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+		  }
+      }
+      
       g2.setFont(new Font("Monato", Font.PLAIN, 30));
       if(deltaTime != 0)
       g2.drawString(score + "", PREF_W / 2 - g2.getFontMetrics().stringWidth(score + ""), 100);
       
+      if(isFirstStart)
+      g2.drawString("Press SPACE to start!", PREF_W / 2 - g2.getFontMetrics().stringWidth("Press SPACE to start!") / 2, 150);				 
+	  
    }
    
    
@@ -253,7 +279,30 @@ public class Game extends JPanel implements MouseListener, KeyListener
 	public void keyPressed(KeyEvent e) {
 		System.out.println("You released a key.");
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-			dy = -jumpHeight;
+			if(gameStarted) {
+				dy = -jumpHeight;
+			} else if(gameOver && readyToRestart) {
+				gameOver = false;
+				readyToRestart = false;
+				restarting = false;
+				pipes.clear();
+				score = 0;
+				x = 300; 		//bird xpos
+				y = 100; 		//bird ypos
+				dy = 0;  		//velocity
+				deltaTime = 1;  //deltatime
+				timer.start();
+				pipeSpawnTimer.start();
+				scrollSpeed = 5;
+				gameStarted = true;
+			} else {
+				gameStarted = true;
+				readyToRestart = false;
+				timer.start();
+				isFirstStart = false;
+				
+			    pipeSpawnTimer.start();
+			}
 		} else if(e.getKeyCode() == KeyEvent.VK_H) {
 			showingHitboxes = !showingHitboxes;
 		}
