@@ -41,23 +41,23 @@ public class Game extends JPanel implements MouseListener, KeyListener
    public static int pipeScale = 2;
    
    //physics vars, for just this class
-   private int x = 300; 		  //bird xpos
-   private int y = 100; 		  //bird ypos
-   private int dy = 0;  		  //velocity
+   private int x = 300; 		//bird xpos
+   private int y = 100; 		//bird ypos
+   private int dy = 0;  		//velocity
    private int jumpHeight = 14; //velocity change in jump
    private int maxSpeed = 15;   //max speed in any direction
    private int scrollSpeed = 4; //how fast stuff moves
    private int deltaTime = 1;   //delta time
    
    private int score = 0;
-   
-   private Rectangle birdHitbox = new Rectangle(x + birdScale * 10, y - bird.getHeight(null), bird.getWidth(null) / 8 - (birdScale * 5), bird.getHeight(null) / 8);
 
    //static b/c i need to reference these in Pipe class for maths...
-   public static Image pipe = new ImageIcon(Game.class.getResource("pipe.png")).getImage();
-   public static Image tube = new ImageIcon(Game.class.getResource("tube.png")).getImage();
-   public static Image sky = new ImageIcon(Game.class.getResource("sky.jpg")).getImage();
    public static Image bird = new ImageIcon(Game.class.getResource("bird.png")).getImage();
+   public static Image pipe = new ImageIcon(Game.class.getResource("pipe.png")).getImage();   
+   public static Image tube = new ImageIcon(Game.class.getResource("tube.png")).getImage(); 
+   public static Image sky = new ImageIcon(Game.class.getResource("sky.jpg")).getImage();
+   
+   private Rectangle birdHitbox = new Rectangle(x + birdScale * 10, y - bird.getHeight(null), bird.getWidth(null) / 8 - (birdScale * 5), bird.getHeight(null) / 8);
 
    public ArrayList<Pipe> pipes = new ArrayList<Pipe>();
    
@@ -84,10 +84,13 @@ public class Game extends JPanel implements MouseListener, KeyListener
 				pipes.get(i).setX(pipes.get(i).x - scrollSpeed);
 				if(pipes.get(i).x <= -200) {
 					pipes.remove(i);
-				} else if(pipes.get(i).x <= x) {
-					score++;
-				} else if(pipes.get(i).x <= x + 200) {
-					pipes.get(i).testHitboxes = true;
+				}
+				if(i <= 2) {
+					if(pipes.get(i).x <= x) {
+							score++;
+					} else if(pipes.get(i).x <= x + 200) {
+							pipes.get(i).testHitboxes = true;
+					}
 				}
 			}
 			
@@ -135,36 +138,39 @@ public class Game extends JPanel implements MouseListener, KeyListener
 	  g2.setComposite(ac);
       
       g2.drawImage(bird, x, y, (bird.getWidth(this) / birdScale), bird.getHeight(this) / birdScale, this);
-    
+      
       for(int i = 0; i < pipes.size(); i++) {
     	  pipes.get(i).draw(g2);
     	  
-		  for(int hitboxLoop = 0; hitboxLoop < 4; hitboxLoop++) { //loop through the hitboxes of each pipe
+		  for(int hitboxLoop = 0; hitboxLoop < 2; hitboxLoop++) { //loop through the hitboxes of each pipe
 			  
 			  if(showingHitboxes) {
 				  g2.fill(pipes.get(i).hitboxes[hitboxLoop]);
-
 			  }
-			  if(pipes.get(i).hitboxes[hitboxLoop].intersects(birdHitbox)) {
-				  pipeSpawnTimer.stop();
-				  scrollSpeed = 0;
-				  dy = 0;
-				  deltaTime = 0;
-				  
-				  g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
-
-				  g2.setFont(new Font("Monato", Font.BOLD, 40));
-				  g2.drawString("You lose!", PREF_W / 2 - g2.getFontMetrics().stringWidth("You lose!") / 2, 100);
-			 
-				  g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-				  
-			  }	  
+			  
+			  if(i < 3) {
+				  if(pipes.get(i).hitboxes[hitboxLoop].intersects(birdHitbox)) {
+					  pipeSpawnTimer.stop();
+					  scrollSpeed = 0;
+					  dy = 0;
+					  deltaTime = 0;
+					  
+					  g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+	
+					  g2.setFont(new Font("Monato", Font.BOLD, 40));
+					  g2.drawString("You lose!", PREF_W / 2 - g2.getFontMetrics().stringWidth("You lose!") / 2, 100);
+				 
+					  g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+					  
+				  }	 
+			  }
     		  
     	  }
-      }
-      
-      if(showingHitboxes) {
-    	  g2.fill(birdHitbox);
+		  
+		  //birdhitboxdisplay
+		  //hello
+		  if(showingHitboxes) g2.fill(birdHitbox);
+		  
       }
    }
    

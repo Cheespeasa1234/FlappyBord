@@ -7,7 +7,7 @@ public class Pipe {
 	
 	public boolean testHitboxes = false;
 	
-	public Image pipe = Game.getPipe();
+	public Image pipe = Game.pipe;
 	public Image tube = Game.tube;
 
 	public int scale = Game.pipeScale;
@@ -42,19 +42,19 @@ public class Pipe {
 		
 		//bottom
 		g2.drawImage(tube,x+5,y + dist / 2 + pipe.getHeight(null) / scale + scale * 5, tube.getWidth(null) / scale, 1000, null);
-		hitboxes[0] = new Rectangle(x + 5, y + dist / 2 + pipe.getHeight(null) / scale, tube.getWidth(null) / scale, 1000);
+		hitboxes[0] = new Rectangle(x + 5, y + dist / 2 + 10, tube.getWidth(null) / scale, 1000);
 		
 		//top
 		g2.drawImage(tube,x+5,y - dist / 2, tube.getWidth(null) / scale, -1000, null);
-		hitboxes[1] = new Rectangle(x + 5, 0, tube.getWidth(null) / scale, y - dist / 2);
+		hitboxes[1] = new Rectangle(x + 5, 0, tube.getWidth(null) / scale, y - dist / 2 + pipe.getHeight(null) / scale);
 		
 		//bottom
 		g2.drawImage(pipe, x, y + dist / 2 + 10, pipe.getWidth(null) / scale, pipe.getHeight(null) / scale, null);
-		hitboxes[2] = new Rectangle(x, y + dist / 2 + 10, pipe.getWidth(null) / scale, pipe.getHeight(null) / scale - 10);
+		//hitboxes[2] = new Rectangle(x, y + dist / 2 + 10, pipe.getWidth(null) / scale, pipe.getHeight(null) / scale - 10);
 		
 		//top
 		g2.drawImage(pipe, x, y - dist / 2, pipe.getWidth(null) / scale, pipe.getHeight(null) / scale, null);
-		hitboxes[3] = new Rectangle(x, y - dist / 2, pipe.getWidth(null) / scale, pipe.getHeight(null) / scale);
+		// hitboxes[3] = new Rectangle(x, y - dist / 2, pipe.getWidth(null) / scale, pipe.getHeight(null) / scale);
 		
 		return true;
 		
