@@ -278,7 +278,8 @@ public class Game extends JPanel implements MouseListener, KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		System.out.println("You released a key.");
-		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+		int key = e.getKeyCode();
+		if (key == KeyEvent.VK_SPACE || key == KeyEvent.VK_UP || key == KeyEvent.VK_A) {
 			if (gameStarted) {
 				dy = -jumpHeight;
 			} else if (gameOver && readyToRestart) {
